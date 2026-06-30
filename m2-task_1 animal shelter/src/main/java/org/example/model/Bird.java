@@ -6,7 +6,7 @@ public final class Bird extends Animal{
     }
 
     @Override
-    public String getSpecies(){
-        return "Bird";
+    public AnimalSpecies getSpecies(){
+        return AnimalSpecies.BIRD;
     }
 }

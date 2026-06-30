@@ -1,6 +1,6 @@
 package org.example.model;
 
-public sealed abstract class Animal permits Dog,Cat,Bird {
+public sealed abstract class Animal permits Dog,Cat,Bird,Hamster {
     private final AnimalId id;
     private String name;
     private int age;
@@ -33,7 +33,7 @@ public sealed abstract class Animal permits Dog,Cat,Bird {
         this.adoptionStatus = AdoptionStatus.ADOPTED;
     }
 
-    public abstract String getSpecies();
+    public abstract AnimalSpecies getSpecies();
 
     @Override
     public String toString(){

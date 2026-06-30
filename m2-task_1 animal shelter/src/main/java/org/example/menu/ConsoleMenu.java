@@ -36,10 +36,9 @@ public class ConsoleMenu {
             switch (choice) {
                 case 1:
                     System.out.println("""
-                            
                             ====Add animal====
                             """);
-                    String species = getSpecies();
+                    AnimalSpecies species = getSpecies();
 
                     System.out.println("Enter animal name: ");
                     String name = readNonEmpty();
@@ -50,7 +49,7 @@ public class ConsoleMenu {
                     String optionalId;
                     do {
                         System.out.println("Enter animal id (OPTIONAL): ");
-                        optionalId = readNonEmpty();
+                        optionalId = scanner.nextLine().trim();
                         if (shelter.isIdTaken(optionalId)) {
                             System.out.println("ID already taken. Please enter a different ID: ");
                         } else break;
@@ -62,40 +61,29 @@ public class ConsoleMenu {
                     else
                         animalId = new AnimalId();
 
-                    if (species.equals("Bird")) {
-                        Bird bird = new Bird(animalId, name, age);
-                        shelter.addAnimal(bird);
-                    } else if (species.equals("Cat")) {
-                        Cat cat = new Cat(animalId, name, age);
-                        shelter.addAnimal(cat);
-                    } else {
-                        Dog dog = new Dog(animalId, name, age);
-                        shelter.addAnimal(dog);
-                    }
+                    Animal animal = AnimalFactory.createAnimal(species, name, age, animalId);
+                    shelter.addAnimal(animal);
+
                     System.out.println("""
-                            
                             ====Animal added successfully!====
                             """);
                     break;
                 case 2:
                     System.out.println("""
-                            
                             ====List all animals====
                             """);
                     shelter.getAllAnimals().forEach(System.out::println);
                     break;
                 case 3:
                     System.out.println("""
-                            
                             ====Find animals by species====
                             """);
-                    String speciesToFind = getSpecies();
+                    AnimalSpecies speciesToFind = getSpecies();
                     System.out.println("Animals of species " + speciesToFind + ":");
                     shelter.findBySpecies(speciesToFind).forEach(System.out::println);
                     break;
                 case 4:
                     System.out.println("""
-                            
                             ====List available animals====
                             """);
                     System.out.println("Available animals:");
@@ -103,17 +91,21 @@ public class ConsoleMenu {
                     break;
                 case 5:
                     System.out.println("""
-                            
                             ====Mark animal as adopted====
                             """);
                     System.out.println("Enter animal ID: ");
                     String id = readNonEmpty();
                     shelter.markAsAdopted(id);
+                    System.out.println("""
+                            ====Animal has been marked as adopted!====
+                            """);
                     break;
                 case 0:
                     System.out.println("Exiting...");
+                    break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
+                    break;
             }
 
 
@@ -121,23 +113,26 @@ public class ConsoleMenu {
 
     }
 
-    private String getSpecies() {
+    private AnimalSpecies getSpecies() {
+        List<MenuOption> speciesOptions = List.of(
+                new MenuOption(1, "Bird"),
+                new MenuOption(2, "Cat"),
+                new MenuOption(3, "Dog"),
+                new MenuOption(4, "Hamster")
+        );
         while (true) {
-            System.out.println("""
-                    Select animal species:
-                    1. Bird
-                    2. Cat
-                    3. Dog
-                    """);
+            speciesOptions.forEach(option -> System.out.println(option.toString()));
             System.out.println("Enter your choice: ");
             int speciesChoice = readInt();
             switch (speciesChoice) {
                 case 1:
-                    return "Bird";
+                    return AnimalSpecies.BIRD;
                 case 2:
-                    return "Cat";
+                    return AnimalSpecies.CAT;
                 case 3:
-                    return "Dog";
+                    return AnimalSpecies.DOG;
+                case 4:
+                    return AnimalSpecies.HAMSTER;
             }
         }
 
@@ -147,7 +142,10 @@ public class ConsoleMenu {
         while (true) {
             String input = scanner.nextLine().trim();
             try {
-                return Integer.parseInt(input);
+                if (Integer.parseInt(input) > 0)
+                    return Integer.parseInt(input);
+                else
+                    System.out.println("Please enter a positive number.");
             } catch (NumberFormatException e) {
                 System.out.println("That's not a whole number. Please try again.");
             }
