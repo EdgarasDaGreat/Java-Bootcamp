@@ -3,11 +3,25 @@ package org.example.menu;
 import org.example.model.*;
 import org.example.shelter.Shelter;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleMenu {
     private final Shelter<Animal> shelter;
     private final Scanner scanner = new Scanner(System.in);
+    List<MenuOption> menuOptions = List.of(
+            new MenuOption(1, "Add animal"),
+            new MenuOption(2, "List all animals"),
+            new MenuOption(3, "Find animals by species"),
+            new MenuOption(4, "List available animals"),
+            new MenuOption(5, "Mark animal as adopted"),
+            new MenuOption(0, "Exit")
+    );
+
+    private void printMenu() {
+        System.out.println("Animal Shelter Menu:");
+        menuOptions.forEach(option -> System.out.println(option.toString()));
+    }
 
     public ConsoleMenu(Shelter<Animal> shelter) {
         this.shelter = shelter;
@@ -96,6 +110,8 @@ public class ConsoleMenu {
                     String id = readNonEmpty();
                     shelter.markAsAdopted(id);
                     break;
+                case 0:
+                    System.out.println("Exiting...");
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
@@ -148,15 +164,5 @@ public class ConsoleMenu {
         }
     }
 
-    private void printMenu() {
-        System.out.println("""
-                
-                1. Add animal
-                2. List all animals
-                3. Find animals by species
-                4. List available animals
-                5. Mark animal as adopted
-                0. Exit
-                """);
-    }
+
 }
