@@ -142,7 +142,7 @@ public class ConsoleMenu {
         while (true) {
             String input = scanner.nextLine().trim();
             try {
-                if (Integer.parseInt(input) > 0)
+                if (Integer.parseInt(input) >= 0)
                     return Integer.parseInt(input);
                 else
                     System.out.println("Please enter a positive number.");
