@@ -18,8 +18,7 @@ public class ConsoleMenu {
         do {
             printMenu();
             System.out.println("Enter your choice: ");
-            choice = scanner.nextInt();
-            scanner.nextLine();
+            choice = readInt();
             switch (choice) {
                 case 1:
                     System.out.println("""
@@ -29,19 +28,19 @@ public class ConsoleMenu {
                     String species = getSpecies();
 
                     System.out.println("Enter animal name: ");
-                    String name = scanner.nextLine();
+                    String name = readNonEmpty();
 
                     System.out.println("Enter animal age: ");
-                    int age = scanner.nextInt();
-                    scanner.nextLine();
+                    int age = readInt();
 
-                    System.out.println("Enter animal id (OPTIONAL): ");
-                    String optionalId = scanner.nextLine();
-
-                    while (shelter.isIdTaken(optionalId)) {
-                        System.out.println("ID already taken. Please enter a different ID: ");
-                        optionalId = scanner.nextLine();
-                    }
+                    String optionalId;
+                    do {
+                        System.out.println("Enter animal id (OPTIONAL): ");
+                        optionalId = readNonEmpty();
+                        if (shelter.isIdTaken(optionalId)) {
+                            System.out.println("ID already taken. Please enter a different ID: ");
+                        } else break;
+                    } while (shelter.isIdTaken(optionalId));
 
                     AnimalId animalId;
                     if (!optionalId.isEmpty())
@@ -94,7 +93,7 @@ public class ConsoleMenu {
                             ====Mark animal as adopted====
                             """);
                     System.out.println("Enter animal ID: ");
-                    String id = scanner.nextLine();
+                    String id = readNonEmpty();
                     shelter.markAsAdopted(id);
                     break;
                 default:
@@ -115,8 +114,7 @@ public class ConsoleMenu {
                     3. Dog
                     """);
             System.out.println("Enter your choice: ");
-            int speciesChoice = scanner.nextInt();
-            scanner.nextLine();
+            int speciesChoice = readInt();
             switch (speciesChoice) {
                 case 1:
                     return "Bird";
@@ -129,6 +127,26 @@ public class ConsoleMenu {
 
     }
 
+    private int readInt() {
+        while (true) {
+            String input = scanner.nextLine().trim();
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("That's not a whole number. Please try again.");
+            }
+        }
+    }
+
+    private String readNonEmpty() {
+        while (true) {
+            String input = scanner.nextLine().trim();
+            if (!input.isEmpty()) {
+                return input;
+            }
+            System.out.println("This field can't be empty. Please try again.");
+        }
+    }
 
     private void printMenu() {
         System.out.println("""
