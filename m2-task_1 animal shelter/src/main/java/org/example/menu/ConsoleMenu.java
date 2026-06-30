@@ -1,6 +1,7 @@
 package org.example.menu;
 
 import org.example.model.*;
+import org.example.shelter.AdoptionData;
 import org.example.shelter.Shelter;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class ConsoleMenu {
             new MenuOption(3, "Find animals by species"),
             new MenuOption(4, "List available animals"),
             new MenuOption(5, "Mark animal as adopted"),
+            new MenuOption(6, "History of adoptions"),
             new MenuOption(0, "Exit")
     );
 
@@ -93,12 +95,31 @@ public class ConsoleMenu {
                     System.out.println("""
                             ====Mark animal as adopted====
                             """);
-                    System.out.println("Enter animal ID: ");
-                    String id = readNonEmpty();
-                    shelter.markAsAdopted(id);
+                    String toBeAdoptedId;
+                    while (true) {
+                        System.out.println("Enter animal id: ");
+                        toBeAdoptedId = readNonEmpty();
+                        if (!shelter.isIdTaken(toBeAdoptedId)) {
+                            System.out.println("No animal with that id found. Please enter a valid id: ");
+                        } else break;
+                    }
+                    System.out.println("Enter adopter name: ");
+                    String adopterName = readNonEmpty();
+                    shelter.markAsAdopted(toBeAdoptedId, adopterName);
                     System.out.println("""
                             ====Animal has been marked as adopted!====
                             """);
+                    break;
+                case 6:
+                    System.out.println("""
+                            ====History of adoptions====
+                            """);
+                    List<AdoptionData> adoptionHistory = shelter.getAdoptedAnimals();
+                    if (adoptionHistory.isEmpty()) {
+                        System.out.println("No animals have been adopted yet.");
+                    }
+                    else
+                        adoptionHistory.forEach(System.out::println);
                     break;
                 case 0:
                     System.out.println("Exiting...");

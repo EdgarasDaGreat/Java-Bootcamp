@@ -4,11 +4,13 @@ import org.example.model.AdoptionStatus;
 import org.example.model.Animal;
 import org.example.model.AnimalSpecies;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Shelter<T extends Animal> {
     private final List<T> animals = new ArrayList<>();
+    private final List<AdoptionData> adoptedAnimals = new ArrayList<>();
 
     public void addAnimal(T animal) {
         animals.add(animal);
@@ -38,13 +40,19 @@ public class Shelter<T extends Animal> {
         return availableAnimals;
     }
 
-    public void markAsAdopted(String id) {
+    public void markAsAdopted(String id, String adopterName) {
         for (T animal : animals) {
             if (animal.getId().toString().equals(id)) {
+                adoptedAnimals.add(new AdoptionData(animal, LocalDate.now(), adopterName));
                 animal.markAsAdopted();
             }
         }
     }
+
+    public List<AdoptionData> getAdoptedAnimals() {
+        return adoptedAnimals;
+    }
+
 
     public boolean isIdTaken(String id) {
         for (T animal : animals) {
