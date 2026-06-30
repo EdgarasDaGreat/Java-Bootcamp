@@ -1,10 +1,7 @@
 package org.example.menu;
 
 import org.example.config.AppConfig;
-import org.example.model.Order;
-import org.example.model.OrderItem;
-import org.example.model.OrderStatus;
-import org.example.model.PaymentResult;
+import org.example.model.*;
 import org.example.payment.PaymentMethod;
 import org.example.payment.PaymentMethodFactory;
 import org.example.payment.PaymentProcessor;
@@ -32,6 +29,7 @@ public class ConsoleMenu {
                 case 2 -> addItem();
                 case 3 -> viewOrder();
                 case 4 -> payOrder();
+                case 5 -> applyDiscount();
                 case 0 -> running = false;
                 default -> System.out.println("Invalid option");
             }
@@ -94,6 +92,7 @@ public class ConsoleMenu {
             System.out.println("- " + item);
         }
 
+        System.out.println("Discount: " + currentOrder.getDiscount());
         System.out.println("Total: " + currentOrder.calculateTotal());
     }
 
@@ -139,6 +138,61 @@ public class ConsoleMenu {
 
         PaymentResult result = paymentProcessor.process(currentOrder, paymentMethod);
         System.out.println(result.getMessage());
+    }
+
+    private void applyDiscount() {
+        if (currentOrder == null) {
+            System.out.println("No order created yet");
+            return;
+        }
+        if (currentOrder.isPaid()) {
+            System.out.println("Order is already paid");
+            return;
+        }
+        System.out.println("""
+            Select discount type:
+            1. Percentage
+            2. Fixed amount
+            3. None
+            """);
+        int option = readInt();
+        if (option == -1) return;
+        if (option < 1 || option > 3) {
+            System.out.println("Invalid option");
+            return;
+        }
+        switch (option) {
+            case 1 -> {
+                System.out.println("Discount code:");
+                String code = readNonEmpty();
+                if (code == null) return;
+
+                System.out.println("Percentage:");
+                double percentage = readDouble();
+                if (percentage == -1) return;
+
+                currentOrder.applyDiscount(new PercentageDiscount(code, percentage));
+                System.out.println("Discount applied");
+            }
+            case 2 -> {
+                System.out.println("Discount code:");
+                String code = readNonEmpty();
+                if (code == null) return;
+
+                System.out.println("Amount:");
+                double amount = readDouble();
+                if (amount == -1) return;
+
+                currentOrder.applyDiscount(new FixedAmountDiscount(code, amount));
+                System.out.println("Discount applied");
+            }
+            case 3 -> {
+                currentOrder.applyDiscount(new NoDiscount());
+                System.out.println("Discount removed");
+            }
+            default -> System.out.println("Invalid option");
+        }
+
     }
 
     private PaymentMethod createCreditCardPayment() {
@@ -238,6 +292,7 @@ public class ConsoleMenu {
                 2. Add item to order
                 3. View order
                 4. Pay order
+                5. Discount selection
                 0. Exit
                 """);
     }

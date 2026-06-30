@@ -27,7 +27,7 @@ public class Order {
         for (OrderItem item : items){
             total += item.calculateTotal();
         }
-        return total;
+        return discount.apply(total);
     }
 
     public void markAsPaid(){
@@ -38,6 +38,10 @@ public class Order {
 
     public void applyDiscount(Discount discount){
         this.discount = discount;
+    }
+
+    public Discount getDiscount(){
+        return discount;
     }
 
     public boolean isPaid(){

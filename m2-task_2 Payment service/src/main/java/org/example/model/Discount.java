@@ -11,4 +11,9 @@ public abstract class Discount {
     }
 
     public abstract double apply(double originalAmount);
+
+    @Override
+    public String toString(){
+        return getClass().getSimpleName();
+    }
 }
