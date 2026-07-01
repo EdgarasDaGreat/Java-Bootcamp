@@ -6,7 +6,7 @@ import com.bootcamp.smarthome.exception.HomeAutomationException;
 
 /**
  * Central hub that manages all registered smart devices.
- *
+ * <p>
  * Devices are stored in a fixed-size array (maximum {@value #MAX_DEVICES}).
  * The controller routes commands to devices by their ID.
  */
@@ -32,7 +32,7 @@ public class HomeController {
         if (deviceCount >= MAX_DEVICES) {
             throw new IllegalStateException(
                     "Cannot add device '" + device.getDeviceId() +
-                    "': controller is at maximum capacity (" + MAX_DEVICES + ").");
+                            "': controller is at maximum capacity (" + MAX_DEVICES + ").");
         }
         devices[deviceCount] = device;
         deviceCount++;
@@ -45,14 +45,14 @@ public class HomeController {
 
     /**
      * Finds a registered device by its ID.
-     *
+     * <p>
      * Returns {@code null} when no matching device is found.
      */
     public Device findDevice(String deviceId) {
         if (deviceId.isEmpty()) {
             throw new DeviceNotFoundException("Device ID is required");
         }
-        for (int i = 0; i <= deviceCount; i++) {
+        for (int i = 0; i <= deviceCount - 1; i++) {//bug 2
             if (devices[i] != null && devices[i].getDeviceId().equals(deviceId)) {
                 return devices[i];
             }
@@ -67,7 +67,7 @@ public class HomeController {
     /**
      * Parses {@code fullCommand}, resolves the target device, and delegates
      * execution to {@link Device#executeCommand(String)}.
-     *
+     * <p>
      * Full command format: {@code "DEVICE_ID ACTION [VALUE]"}
      * Example: {@code "LIGHT_01 SET_BRIGHTNESS 75"}
      *
@@ -75,7 +75,7 @@ public class HomeController {
      */
     public void sendCommand(String fullCommand) throws HomeAutomationException {
         String deviceId = CommandParser.extractDeviceId(fullCommand);
-        String command  = CommandParser.extractCommand(fullCommand);
+        String command = CommandParser.extractCommand(fullCommand);
 
         Device device = findDevice(deviceId);
 
@@ -90,9 +90,9 @@ public class HomeController {
 
         try {
             device.executeCommand(command);
-        } catch (HomeAutomationException e){
+        } catch (HomeAutomationException e) {
             throw new HomeAutomationException("Command \"" + fullCommand + "\" failed for device \"" + deviceId + "\"", e);
-        } finally{
+        } finally {
             System.out.printf("Command processing ended for device %s%n", device.getDeviceId());
         }
 
@@ -102,7 +102,9 @@ public class HomeController {
     // Utility
     // -------------------------------------------------------------------------
 
-    /** Prints the status of every registered device. */
+    /**
+     * Prints the status of every registered device.
+     */
     public void printAllDevices() {
         System.out.println("=== Registered Devices (" + deviceCount + "/" + MAX_DEVICES + ") ===");
         for (int i = 0; i < deviceCount; i++) {

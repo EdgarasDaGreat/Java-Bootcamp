@@ -5,7 +5,7 @@ import com.bootcamp.smarthome.exception.InvalidCommandException;
 
 /**
  * A PIN-protected smart door lock.
- *
+ * <p>
  * The lock can be locked or unlocked via a 4-digit PIN.
  * Every failed unlock attempt is treated as a security event.
  */
@@ -28,7 +28,7 @@ public class SmartLock extends Device {
      * Validates the supplied PIN against the stored PIN.
      */
     public void validatePin(String pin) throws InvalidCommandException {
-        if (pin == null) {
+        if (pin == null) { //bug 1
             throw new InvalidCommandException("Pin is required");
         }
         if (pin.equals(storedPin)) {
