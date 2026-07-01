@@ -1,5 +1,9 @@
 package com.bootcamp.smarthome.device;
 
+import com.bootcamp.smarthome.exception.HomeAutomationException;
+import com.bootcamp.smarthome.exception.InvalidCommandException;
+import com.bootcamp.smarthome.exception.InvalidValueException;
+
 /**
  * A dimmable smart light bulb.
  *
@@ -25,13 +29,16 @@ public class SmartLight extends Device {
      *
      * Valid range: 0–100 inclusive.
      */
-    public void setBrightness(int level) {
+    public void setBrightness(int level) throws InvalidValueException {
+        if (level < 0 || level > 100){
+            throw new InvalidValueException ("Invalid brightness level: ", level, "[0; 100]");
+        }
         this.brightness = level;
         System.out.println(getName() + " brightness set to " + level + "%");
     }
 
     @Override
-    public void executeCommand(String command) {
+    public void executeCommand(String command) throws HomeAutomationException {
         if (command.startsWith("SET_BRIGHTNESS")) {
             String[] parts = command.split(" ");
             int level = (parts.length > 1) ? Integer.parseInt(parts[1]) : 50;
@@ -41,7 +48,7 @@ public class SmartLight extends Device {
         } else if (command.equals("TURN_OFF")) {
             turnOff();
         } else {
-            System.out.println("Unknown command for SmartLight '" + getName() + "': " + command);
+            throw new InvalidCommandException("Unknown command for SmartLight '" + getName() + "': " + command);
         }
     }
 

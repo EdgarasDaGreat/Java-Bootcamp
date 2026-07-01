@@ -1,6 +1,8 @@
 package com.bootcamp.smarthome.controller;
 
 import com.bootcamp.smarthome.device.Device;
+import com.bootcamp.smarthome.exception.DeviceNotFoundException;
+import com.bootcamp.smarthome.exception.HomeAutomationException;
 
 /**
  * Central hub that manages all registered smart devices.
@@ -47,6 +49,9 @@ public class HomeController {
      * Returns {@code null} when no matching device is found.
      */
     public Device findDevice(String deviceId) {
+        if (deviceId.isEmpty()) {
+            throw new DeviceNotFoundException("Device ID is required");
+        }
         for (int i = 0; i <= deviceCount; i++) {
             if (devices[i] != null && devices[i].getDeviceId().equals(deviceId)) {
                 return devices[i];
@@ -68,15 +73,14 @@ public class HomeController {
      *
      * @param fullCommand the full command string
      */
-    public void sendCommand(String fullCommand) {
+    public void sendCommand(String fullCommand) throws HomeAutomationException {
         String deviceId = CommandParser.extractDeviceId(fullCommand);
         String command  = CommandParser.extractCommand(fullCommand);
 
         Device device = findDevice(deviceId);
 
         if (device == null) {
-            System.out.println("Device not found: " + deviceId);
-            return;
+            throw new DeviceNotFoundException("No device found with ID: " + deviceId);
         }
 
         if (!device.isOnline()) {
@@ -84,7 +88,14 @@ public class HomeController {
             return;
         }
 
-        device.executeCommand(command);
+        try {
+            device.executeCommand(command);
+        } catch (HomeAutomationException e){
+            throw new HomeAutomationException("Command \"" + fullCommand + "\" failed for device \"" + deviceId + "\"", e);
+        } finally{
+            System.out.printf("Command processing ended for device %s%n", device.getDeviceId());
+        }
+
     }
 
     // -------------------------------------------------------------------------
