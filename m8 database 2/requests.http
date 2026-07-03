@@ -1,0 +1,83 @@
+### Create a book
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "The Pragmatic Programmer",
+  "author": "Andrew Hunt",
+  "genre": "Software",
+  "publicationYear": 1999
+}
+
+### Create a second book
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "author": "Robert C. Martin",
+  "genre": "Software",
+  "publicationYear": 2008
+}
+
+
+### Get all books
+GET http://localhost:8080/api/books
+
+
+### Get book by id
+GET http://localhost:8080/api/books/1
+
+
+### Get book by id — not found
+GET http://localhost:8080/api/books/999999
+
+
+### Update a book
+PUT http://localhost:8080/api/books/1
+Content-Type: application/json
+
+{
+  "title": "The Pragmatic Programmer (2nd Ed.)",
+  "author": "Andrew Hunt",
+  "genre": "Software",
+  "publicationYear": 2019,
+  "available": false
+}
+
+
+### Find books by author
+GET http://localhost:8080/api/books/author/Andrew%20Hunt
+
+
+### Find available books
+GET http://localhost:8080/api/books/available
+
+
+### Delete a book by id
+DELETE http://localhost:8080/api/books/1
+
+
+### Blank title — should fail validation
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "   ",
+  "author": "Andrew Hunt",
+  "genre": "Software",
+  "publicationYear": 1999
+}
+
+
+### Future publication year — should fail validation
+PUT http://localhost:8080/api/books/1
+Content-Type: application/json
+
+{
+  "title": "Time Machine",
+  "author": "H.G. Wells",
+  "genre": "SciFi",
+  "publicationYear": 3000,
+  "available": true
+}
