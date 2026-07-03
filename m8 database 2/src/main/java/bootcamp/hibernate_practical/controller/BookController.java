@@ -1,9 +1,10 @@
 package bootcamp.hibernate_practical.controller;
 
-import bootcamp.hibernate_practical.dto.BookResponse;
-import bootcamp.hibernate_practical.dto.CreateBookRequest;
-import bootcamp.hibernate_practical.dto.UpdateBookRequest;
+import bootcamp.hibernate_practical.dto.BookResponseDto;
+import bootcamp.hibernate_practical.dto.CreateBookRequestDto;
+import bootcamp.hibernate_practical.dto.UpdateBookRequestDto;
 import bootcamp.hibernate_practical.service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,43 +19,38 @@ public class BookController {
     }
 
     @PostMapping
-    public BookResponse createBook(@RequestBody CreateBookRequest createBookRequest) {
+    public BookResponseDto createBook(@Valid @RequestBody CreateBookRequestDto createBookRequest) {
         return bookService.createBook(createBookRequest);
     }
 
     @GetMapping
-    public List<BookResponse> getAllBooks() {
-        // TODO
-        return null;
+    public List<BookResponseDto> getAllBooks() {
+        return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
-    public BookResponse getBookById(@PathVariable Long id) {
-        // TODO
-        return null;
+    public BookResponseDto getBookById(@Valid @PathVariable Long id) {
+        return bookService.getBookById(id);
     }
 
     @PutMapping("/{id}")
-    public BookResponse updateBook(@PathVariable Long id, @RequestBody UpdateBookRequest updateBookRequest) {
-        // TODO
-        return null;
+    public BookResponseDto updateBook(@Valid @PathVariable Long id,@Valid @RequestBody UpdateBookRequestDto updateBookRequest) {
+        return bookService.updateBook(id, updateBookRequest);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) {
-        // TODO
+    public void deleteBook(@Valid @PathVariable Long id) {
+        bookService.deleteBook(id);
     }
 
     @GetMapping("/author/{author}")
-    public List<BookResponse> getBooksByAuthor(@PathVariable String author) {
-        // TODO
-        return null;
+    public List<BookResponseDto> getBooksByAuthor(@Valid @PathVariable String author) {
+        return bookService.findByAuthor(author);
     }
 
     @GetMapping("/available")
-    public List<BookResponse> getAvailableBooks() {
-        // TODO
-        return null;
+    public List<BookResponseDto> getAvailableBooks() {
+        return bookService.findAvailableBooks();
     }
 
 }

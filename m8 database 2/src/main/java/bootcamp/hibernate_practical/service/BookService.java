@@ -1,13 +1,16 @@
 package bootcamp.hibernate_practical.service;
 
-import bootcamp.hibernate_practical.dto.BookResponse;
-import bootcamp.hibernate_practical.dto.CreateBookRequest;
-import bootcamp.hibernate_practical.dto.UpdateBookRequest;
+import bootcamp.hibernate_practical.dto.BookResponseDto;
+import bootcamp.hibernate_practical.dto.CreateBookRequestDto;
+import bootcamp.hibernate_practical.dto.UpdateBookRequestDto;
 import bootcamp.hibernate_practical.entity.Book;
+import bootcamp.hibernate_practical.mapper.BookMapper;
 import bootcamp.hibernate_practical.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookService {
@@ -17,59 +20,60 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public BookResponse createBook(CreateBookRequest request) {
-        Book book = new Book(
-                request.getTitle(),
-                request.getAuthor(),
-                request.getGenre(),
-                request.getPublicationYear(),
-                true
-        );
-        Book savedBook = bookRepository.save(book);
-        return mapToResponse(savedBook);
+    public BookResponseDto createBook(CreateBookRequestDto request) {
+        BookMapper mapper = new BookMapper();
+        Book book = mapper.toCreateEntity(request);
+        bookRepository.save(book);
+        return mapper.toDto(book);
     }
 
-    public List<BookResponse> getAllBooks() {
-        // TODO:
-        // Fetch all books from the repository
-        // Convert each Book entity into BookResponse DTO
-        // Return the list
-        return null;
+    public List<BookResponseDto> getAllBooks() {
+        BookMapper mapper = new BookMapper();
+        List<Book> bookEntities = bookRepository.findAll();
+        List<BookResponseDto> bookResponseDtos = new ArrayList<>();
+        for (Book bookEntity : bookEntities) {
+            bookResponseDtos.add(mapper.toDto(bookEntity));
+        }
+        return bookResponseDtos;
     }
 
-    public BookResponse getBookById(Long id) {
-        // TODO
-        // Find the book by its ID
-        // Throw RuntimeException if not found
-        // Convert the entity to BookResponse
-        return null;
+    public BookResponseDto getBookById(Long id) {
+        BookMapper mapper = new BookMapper();
+        Book book = bookRepository.findById(id).orElseThrow(()-> new RuntimeException("Book not found with id:" + id));
+        return mapper.toDto(book);
     }
 
-    public BookResponse updateBook(Long id, UpdateBookRequest request) {
-        // TODO
-        // Find existing book
-        // Update its fields
-        // Save the updated entity
-        // Convert to BookResponse
-        return null;
+    public BookResponseDto updateBook(Long id, UpdateBookRequestDto request) {
+        BookMapper mapper = new BookMapper();
+        Book book = bookRepository.findById(id).orElseThrow(()-> new RuntimeException("Book not found with id:" + id));
+        Book updatedBook = mapper.toUpdateEntity(book, request);
+        bookRepository.save(updatedBook);
+        return mapper.toDto(updatedBook);
     }
 
     public void deleteBook(Long id) {
-        // TODO
+        Book book = bookRepository.findById(id).orElseThrow(()-> new RuntimeException("Book not found with id:" + id));
+        bookRepository.delete(book);
     }
 
-    public List<BookResponse> findByAuthor(String author) {
-        // TODO
-        return null;
+    public List<BookResponseDto> findByAuthor(String author) {
+        BookMapper mapper = new BookMapper();
+        List<Book> booksByAuthor = new ArrayList<>();
+        booksByAuthor = bookRepository.findByAuthor(author);
+        List<BookResponseDto> bookResponseDtos = new ArrayList<>();
+        for (Book book : booksByAuthor) {
+            bookResponseDtos.add(mapper.toDto(book));
+        }
+        return bookResponseDtos;
     }
 
-    public List<BookResponse> findAvailableBooks(){
-        // TODO
-        return null;
-    }
-
-    private BookResponse mapToResponse(Book book) {
-        // TODO: map Book to BookResponse
-        return null;
+    public List<BookResponseDto> findAvailableBooks() {
+        BookMapper mapper = new BookMapper();
+        List<Book> availableBooks = bookRepository.findByAvailableTrue();
+        List<BookResponseDto> bookResponseDtos = new ArrayList<>();
+        for (Book book : availableBooks) {
+            bookResponseDtos.add(mapper.toDto(book));
+        }
+        return bookResponseDtos;
     }
 }
