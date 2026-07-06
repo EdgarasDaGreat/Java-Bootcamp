@@ -1,5 +1,6 @@
-### Create a book
+### Create a book (admin) -> 200
 POST http://localhost:8080/api/books
+Authorization: Basic admin admin
 Content-Type: application/json
 
 {
@@ -9,8 +10,10 @@ Content-Type: application/json
   "publicationYear": 1999
 }
 
-### Create a second book
+
+### Create a second book (admin) -> 200
 POST http://localhost:8080/api/books
+Authorization: Basic admin admin
 Content-Type: application/json
 
 {
@@ -21,20 +24,27 @@ Content-Type: application/json
 }
 
 
-### Get all books
+### Get all books (user) -> 200
 GET http://localhost:8080/api/books
+Authorization: Basic user user
 
 
-### Get book by id
+### Get book by id (user) -> 200
 GET http://localhost:8080/api/books/1
+Authorization: Basic user user
 
 
-### Get book by id — not found
+### Get a book by non existant id (user) -> 404
 GET http://localhost:8080/api/books/999999
+Authorization: Basic user user
 
+### Delete a book by non existant id (admin) -> 404
+DELETE http://localhost:8080/api/books/99999
+Authorization: Basic admin admin
 
-### Update a book
-PUT http://localhost:8080/api/books/1
+### Update a book by non existant id (admin) -> 404
+PUT http://localhost:8080/api/books/99999
+Authorization: Basic admin admin
 Content-Type: application/json
 
 {
@@ -46,20 +56,38 @@ Content-Type: application/json
 }
 
 
-### Find books by author
+### Update a book (admin) -> 200
+PUT http://localhost:8080/api/books/1
+Authorization: Basic admin admin
+Content-Type: application/json
+
+{
+  "title": "The Pragmatic Programmer (2nd Ed.)",
+  "author": "Andrew Hunt",
+  "genre": "Software",
+  "publicationYear": 2019,
+  "available": false
+}
+
+
+### Find books by author (user) -> 200
 GET http://localhost:8080/api/books/author/Andrew%20Hunt
+Authorization: Basic user user
 
 
-### Find available books
+### Find available books (user) -> 200
 GET http://localhost:8080/api/books/available
+Authorization: Basic user user
 
 
-### Delete a book by id
-DELETE http://localhost:8080/api/books/1
+### Delete a book by id (admin) -> 204
+DELETE http://localhost:8080/api/books/2
+Authorization: Basic admin admin
 
 
-### Blank title — should fail validation
+### Blank title — should fail validation (admin) -> 400
 POST http://localhost:8080/api/books
+Authorization: Basic admin admin
 Content-Type: application/json
 
 {
@@ -70,8 +98,9 @@ Content-Type: application/json
 }
 
 
-### Future publication year — should fail validation
+### Future publication year — should fail validation (admin) -> 400
 PUT http://localhost:8080/api/books/1
+Authorization: Basic admin admin
 Content-Type: application/json
 
 {
@@ -81,3 +110,61 @@ Content-Type: application/json
   "publicationYear": 3000,
   "available": true
 }
+
+
+### No credentials GET -> 401 Unauthorized
+GET http://localhost:8080/api/books
+
+### No credentials GET by ID-> 401 Unauthorized
+GET http://localhost:8080/api/books/1
+
+### No credentials DELETE -> 401 Unauthorized
+DELETE http://localhost:8080/api/books/1
+
+### No credentials PUT -> 401 Unauthorized
+PUT http://localhost:8080/api/books/1
+Content-Type: application/json
+
+{
+  "title": "The Pragmatic Programmer (2nd Ed.)",
+  "author": "Andrew Hunt",
+  "genre": "Software",
+  "publicationYear": 2019,
+  "available": false
+}
+
+### Bad password -> 401 Unauthorized
+GET http://localhost:8080/api/books
+Authorization: Basic admin wrongpassword
+
+
+### User tries to create a book -> 403 Forbidden
+POST http://localhost:8080/api/books
+Authorization: Basic user user
+Content-Type: application/json
+
+{
+  "title": "Should Be Forbidden",
+  "author": "Nobody",
+  "genre": "Software",
+  "publicationYear": 2020
+}
+
+
+### User tries to update a book -> 403 Forbidden
+PUT http://localhost:8080/api/books/1
+Authorization: Basic user user
+Content-Type: application/json
+
+{
+  "title": "Should Be Forbidden",
+  "author": "Nobody",
+  "genre": "Software",
+  "publicationYear": 2020,
+  "available": true
+}
+
+
+### User tries to delete a book -> 403 Forbidden
+DELETE http://localhost:8080/api/books/1
+Authorization: Basic user user
