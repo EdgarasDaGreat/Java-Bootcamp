@@ -5,6 +5,7 @@ import bootcamp.hibernate_practical.dto.CreateBookRequestDto;
 import bootcamp.hibernate_practical.dto.UpdateBookRequestDto;
 import bootcamp.hibernate_practical.service.BookService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public class BookController {
     }
 
     @PostMapping
-    public BookResponseDto createBook(@Valid @RequestBody CreateBookRequestDto createBookRequest) {
-        return bookService.createBook(createBookRequest);
+    public ResponseEntity<BookResponseDto> createBook(@Valid @RequestBody CreateBookRequestDto createBookRequest) {
+        return ResponseEntity.ok().body(bookService.createBook(createBookRequest));
     }
 
     @GetMapping
@@ -29,22 +30,23 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public BookResponseDto getBookById(@Valid @PathVariable Long id) {
+    public BookResponseDto getBookById(@PathVariable Long id) {
         return bookService.getBookById(id);
     }
 
     @PutMapping("/{id}")
-    public BookResponseDto updateBook(@Valid @PathVariable Long id,@Valid @RequestBody UpdateBookRequestDto updateBookRequest) {
+    public BookResponseDto updateBook(@PathVariable Long id,@Valid @RequestBody UpdateBookRequestDto updateBookRequest) {
         return bookService.updateBook(id, updateBookRequest);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBook(@Valid @PathVariable Long id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/author/{author}")
-    public List<BookResponseDto> getBooksByAuthor(@Valid @PathVariable String author) {
+    public List<BookResponseDto> getBooksByAuthor(@PathVariable String author) {
         return bookService.findByAuthor(author);
     }
 
