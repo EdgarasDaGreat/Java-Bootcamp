@@ -1,0 +1,103 @@
+# RestClient (blocking) endpoints - BookController
+
+### Get all books
+GET http://localhost:8080/api/books
+
+### Get one book by id (happy path)
+GET http://localhost:8080/api/books/1
+
+### Get a book that doesn't exist (expect 404 -> ProductNotFoundException)
+GET http://localhost:8080/api/books/123456
+
+# Chaos IDs: exercise the error handling
+
+### Chaos 991
+GET http://localhost:8080/api/books/991
+
+### Chaos 992
+GET http://localhost:8080/api/books/992
+
+### Chaos 993
+GET http://localhost:8080/api/books/993
+
+# Bonus chaos IDs
+
+### Chaos 99
+GET http://localhost:8080/api/books/99
+
+### Chaos 994
+GET http://localhost:8080/api/books/994
+
+### Chaos 995
+GET http://localhost:8080/api/books/995
+
+### Chaos 996
+GET http://localhost:8080/api/books/996
+
+### Chaos 997
+GET http://localhost:8080/api/books/997
+
+### Chaos 998
+GET http://localhost:8080/api/books/998
+
+### Chaos 999
+GET http://localhost:8080/api/books/999
+
+
+############################################################
+# WebClient (non-blocking) endpoints - BookController
+############################################################
+
+### Get all books (async)
+GET http://localhost:8080/api/books/async
+
+### Get one book by id (async)
+GET http://localhost:8080/api/books/async/1
+
+### Get a book that doesn't exist (async)
+GET http://localhost:8080/api/books/async/123456
+
+# Chaos IDs: exercise the async error handling
+
+### Chaos 991 (async)
+GET http://localhost:8080/api/books/async/991
+
+### Chaos 992 (async)
+GET http://localhost:8080/api/books/async/992
+
+### Chaos 993 (async)
+GET http://localhost:8080/api/books/async/993
+
+# Bonus chaos IDs (async)
+
+### Chaos 99 (async)
+GET http://localhost:8080/api/books/async/99
+
+### Chaos 994 (async)
+GET http://localhost:8080/api/books/async/994
+
+### Chaos 995 (async)
+GET http://localhost:8080/api/books/async/995
+
+### Chaos 996 (async)
+GET http://localhost:8080/api/books/async/996
+
+### Chaos 997 (async)
+GET http://localhost:8080/api/books/async/997
+
+### Chaos 998 (async)
+GET http://localhost:8080/api/books/async/998
+
+### Chaos 999 (async)
+GET http://localhost:8080/api/books/async/999
+
+# Parallel fetch (Mono.zip) - two books at once
+
+### Parallel
+GET http://localhost:8080/api/books/async/parallel?id1=1&id2=2
+
+### Parallel, both slow, total should be ~5s
+GET http://localhost:8080/api/books/async/parallel?id1=999&id2=999
+
+### Parallel, one fails, whole call fails
+GET http://localhost:8080/api/books/async/parallel?id1=1&id2=993
