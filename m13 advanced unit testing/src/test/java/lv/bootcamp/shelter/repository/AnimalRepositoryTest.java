@@ -29,34 +29,51 @@ class AnimalRepositoryTest {
 
     @Test
     void save_shouldPersistAnimalAndGenerateId() {
-        // TODO:
-        // 1. Create an Animal with id=null
-        // 2. Call animalRepository.save()
-        // 3. Assert the returned animal has a non-null id and the correct name
+        Animal animal = new Animal(null, "Rex", AnimalType.DOG, "German shepard", 3, "Friendly", AnimalStatus.AVAILABLE);
+        Animal savedAnimal = animalRepository.save(animal);
+        assertThat(savedAnimal.getId()).isNotNull();
     }
 
     @Test
     void findByStatus_shouldReturnOnlyMatchingAnimals() {
-        // TODO:
-        // 1. Persist two AVAILABLE animals and one ADOPTED animal via entityManager
-        //    Call entityManager.flush() after persisting
-        // 2. Call animalRepository.findByStatus(AVAILABLE)
-        // 3. Assert only the two available animals are returned
+        entityManager.persist(new Animal(null, "Rex", AnimalType.DOG,
+                "German shepard", 3, "Friendly", AnimalStatus.AVAILABLE));
+        entityManager.persist(new Animal(null, "Fiona", AnimalType.CAT,
+                "Fluffy", 3, "Friendly", AnimalStatus.AVAILABLE));
+        entityManager.persist(new Animal(null, "Pete", AnimalType.BIRD,
+                "Dragon", 3, "Friendly", AnimalStatus.ADOPTED));
+        entityManager.flush();
+
+        List<Animal> availableAnimals = animalRepository.findByStatus(AnimalStatus.AVAILABLE);
+
+        assertThat(availableAnimals).hasSize(2);
     }
 
     @Test
     void findByType_shouldReturnAnimalsOfGivenType() {
-        // TODO:
-        // 1. Persist one DOG and one CAT, flush
-        // 2. Call animalRepository.findByType(DOG)
-        // 3. Assert only the dog is returned
+        entityManager.persist(new Animal(null, "Rex", AnimalType.DOG,
+                "German shepard", 3, "Friendly", AnimalStatus.AVAILABLE));
+        entityManager.persist(new Animal(null, "Fiona", AnimalType.CAT,
+                "Fluffy", 3, "Friendly", AnimalStatus.AVAILABLE));
+        entityManager.flush();
+
+        List<Animal> dogs = animalRepository.findByType(AnimalType.DOG);
+
+        assertThat(dogs).hasSize(1);
     }
 
     @Test
     void findByNameContainingIgnoreCase_shouldMatchPartialName() {
-        // TODO:
-        // 1. Persist animals named "Rex", "Rexy Jr", and "Mia", flush
-        // 2. Call animalRepository.findByNameContainingIgnoreCase("rex")
-        // 3. Assert two results are returned (case-insensitive partial match)
+        entityManager.persist(new Animal(null, "Rex", AnimalType.DOG,
+                "German shepard", 3, "Friendly", AnimalStatus.AVAILABLE));
+        entityManager.persist(new Animal(null, "Rexy Jr", AnimalType.CAT,
+                "Fluffy", 3, "Friendly", AnimalStatus.AVAILABLE));
+        entityManager.persist(new Animal(null, "Mia", AnimalType.BIRD,
+                "Dragon", 3, "Friendly", AnimalStatus.ADOPTED));
+        entityManager.flush();
+
+        List<Animal> results = animalRepository.findByNameContainingIgnoreCase("rex");
+
+        assertThat(results).hasSize(2);
     }
 }
